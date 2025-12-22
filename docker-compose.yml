@@ -1,0 +1,46 @@
+version: "2.40.3"
+services:
+  postgres:
+    container_name: edslp_pg
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PG_DATA: /var/lib/postgresql/data
+    volumes:
+      - edslp:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - edslp_net
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: edslp_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: ${PGADMIN_CONFIG_SERVER_MODE}
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+    - edslp_net
+    restart: unless-stopped
+
+  mail-dev:
+    container_name: edslp_mail_dev
+    image: maildev/maildev
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+networks:
+  edslp_net:
+    driver: bridge
+
+volumes:
+  edslp:
+  pgadmin:
